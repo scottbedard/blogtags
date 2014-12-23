@@ -78,8 +78,7 @@ class BlogRelated extends ComponentBase
             ->whereHas('tags', function($query) {
                 $query->whereIn('id', $this->tagIds);
             })
-            ->with('tags')
-            ->orderBy('published_at', 'desc');
+            ->with('tags');
     }
 
     /**
@@ -110,7 +109,7 @@ class BlogRelated extends ComponentBase
     {
         $results = $matches = [];
         $related = $this->query->get();
-        
+
         foreach ($related as $post) {
             $overlap = 0;
             foreach ($post->tags as $tag)

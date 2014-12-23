@@ -54,7 +54,7 @@ class Tagbox extends FormWidgetBase
     public function init()
     {
         // Return if we have no post data
-        if (!$tags = post('Post')['tags'])
+        if (empty(post('Post')['tags']) || ! $tags = post('Post')['tags'])
             return;
 
         // Remove old tags if needed

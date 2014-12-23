@@ -17,7 +17,6 @@ class Plugin extends PluginBase
 
     /**
      * Returns information about this plugin.
-     *
      * @return array
      */
     public function pluginDetails()
@@ -44,6 +43,19 @@ class Plugin extends PluginBase
     }
 
     /**
+     * Register components
+     * @return array
+     */
+    public function registerComponents()
+    {
+        return [
+            'Bedard\BlogTags\Components\blogTags'       => 'blogTags',
+            'Bedard\BlogTags\Components\blogTagSearch'  => 'blogTagSearch',
+            'Bedard\BlogTags\Components\blogRelated'    => 'blogRelated',
+        ];
+    }
+
+    /**
      * Add tags field to blog posts
      */
     public function boot()
@@ -54,11 +66,8 @@ class Plugin extends PluginBase
         });
 
         // Extend the controller and add the tags field
-        PostsController::extendFormFields(function($form, $model, $context){
-            // Make sure we're dealing with the correct model
-            if (!$model instanceof \RainLab\Blog\Models\Post) return;
-
-            // Add the tagbox element
+        PostsController::extendFormFields(function($form, $model, $context) {
+            if (!$model instanceof PostModel) return;
             $form->addSecondaryTabFields([
                 'tags' => [
                     'label' => 'Tags',

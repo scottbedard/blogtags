@@ -19,7 +19,7 @@ class Tag extends Model
      * @var array Relations
      */
     public $belongsToMany = [
-        'posts' => ['RainLab\Blog\Models\Post', 'table' => 'rainlab_blog_posts', 'order' => 'title']
+        'posts' => ['RainLab\Blog\Models\Post', 'table' => 'bedard_blogtags_post_tag', 'order' => 'published_at desc', 'scope' => 'isPublished']
     ];
 
     /**
@@ -40,5 +40,13 @@ class Tag extends Model
     public $customMessages = [
         'name.regex' => 'Tags may contain only alpha-numeric characters and hyphens.'
     ];
+
+    /**
+     * Convert tag names to lower case
+     */
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = strtolower($value);
+    }
 
 }
