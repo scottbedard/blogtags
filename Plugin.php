@@ -51,28 +51,21 @@ class Plugin extends PluginBase
         // Extend the posts model to establish the new tags relationship
         PostModel::extend(function ($model) {
             $model->belongsToMany['tags'] = ['Bedard\BlogTags\Models\Tag', 'table' => 'bedard_blogtags_post_tag', 'order' => 'name'];
-
-            // $model->beforeSave(function() {
-            //     echo 'hello';
-            // });
         });
 
         // Extend the controller and add the tags field
         PostsController::extendFormFields(function($form, $model, $context){
             // Make sure we're dealing with the correct model
-            if (!$model instanceof \RainLab\Blog\Models\Post)
-                return;
+            if (!$model instanceof \RainLab\Blog\Models\Post) return;
 
             // Add the tagbox element
             $form->addSecondaryTabFields([
                 'tags' => [
-                    'label'     => 'Tags',
-                    'tab'       => 'rainlab.blog::lang.post.tab_categories',
-                    'type'      => 'tagbox',
-                    'comment'   => 'Here you can specify tags to help the blog find related posts.'
+                    'label' => 'Tags',
+                    'tab'   => 'rainlab.blog::lang.post.tab_categories',
+                    'type'  => 'tagbox'
                 ]
             ]);
         });
-
     }
 }

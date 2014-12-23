@@ -19,5 +19,10 @@ class Tag extends Model
     public $belongsToMany = [
         'posts' => ['RainLab\Blog\Models\Post', 'table' => 'rainlab_blog_posts', 'order' => 'title']
     ];
+    
+    /**
+     * @var array Fillable fields
+     */
+    public $fillable = ['name'];
 
 }
