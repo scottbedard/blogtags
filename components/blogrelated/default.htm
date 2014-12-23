@@ -1,0 +1,6 @@
+<h1>Related posts</h1>
+<ul>
+	{% for Post in __SELF__.posts %}
+		<li>{{ Post.title }}</li>
+	{% endfor %}
+</ul>

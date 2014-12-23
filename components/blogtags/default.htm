@@ -1,0 +1,5 @@
+<ul>
+	{% for tag in __SELF__.tags %}
+		<li>{{ tag.name }} ({{ tag.posts|length }})</li>
+	{% endfor %}
+</ul>
