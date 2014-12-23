@@ -15,7 +15,7 @@ class CreateTagsTable extends Migration
             {
                 $table->engine = 'InnoDB';
                 $table->increments('id');
-                $table->string('name')->nullable();
+                $table->string('name')->unique()->nullable();
                 $table->timestamps();
             });
 
