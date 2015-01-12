@@ -129,7 +129,9 @@ class BlogTagSearch extends ComponentBase
             ->first();
 
         // Count the posts being returned
-        $this->postsOnPage = count($this->tag->posts); 
+        $this->postsOnPage = $this->tag
+            ? count($this->tag->posts)
+            : 0;
     }
 
     /**
