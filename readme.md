@@ -16,6 +16,11 @@ The `Tag List` component can be used to display a list of all tags. This compone
 
 
 ### Tag Search
-The `Tag Search` component returns all posts with a particular tag. This component has only one property...
+The `Tag Search` component returns all posts with a particular tag. This component has only four properties...
 
-- **Tag** - The tag being searched for.
+- **Tag** - The URL parameter used to search for posts.
+- **Pagination** - Determines if the results are paginated or not.
+- **Page** - The URL parameter defining the page of results.
+- **resultsPerPage** - Number of results to display per page.
+
+This component provides several pagination variables. They are **totalPosts**, **postsOnPage**, **currentPage**, **resultsPerPage**, **previousPage**, **nextPage**, and **lastPage**. For an example of how to paginate your results, please review the pagination partial. The posts may be loaded through the **Page** URL parameter, or through the AJAX framework via the **onLoadPage()** method.

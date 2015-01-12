@@ -1,0 +1,33 @@
+<div>
+    Displaying {{ __SELF__.postsOnPage }} of {{ __SELF__.totalPosts }} posts
+</div>
+
+<div>
+    Viewing page {{ __SELF__.currentPage }} of {{ __SELF__.lastPage }}
+</div>
+
+<div>
+    {% if __SELF__.previousPage %}
+        <a href="#"
+            data-request="onLoadPage"
+            data-request-data="page: {{ __SELF__.previousPage }}"
+            data-request-update="
+                'blogTagSearch::default': '#blogTagSearch-results',
+                'blogTagSearch::pagination': '#blogTagSearch-pagination',
+            ">
+            &lg; Back
+        </a>
+    {% endif %}
+
+    {% if __SELF__.nextPage %}
+        <a href="#"
+            data-request="onLoadPage"
+            data-request-data="page: {{ __SELF__.nextPage }}"
+            data-request-update="
+                'blogTagSearch::default': '#blogTagSearch-results',
+                'blogTagSearch::pagination': '#blogTagSearch-pagination',
+            ">
+            Next &gt;
+        </a>
+    {% endif %}
+</div>
