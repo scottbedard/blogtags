@@ -51,7 +51,7 @@ class BlogRelated extends ComponentBase
                     'newestRelated' => 'Newest Related',
                     'mostRelated'   => 'Most Related'
                 ],
-                'default'           => 'newest',
+                'default'           => 'newestRelated',
                 'showExternalParam' => false
             ]
         ];

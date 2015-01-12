@@ -49,9 +49,9 @@ class Plugin extends PluginBase
     public function registerComponents()
     {
         return [
-            'Bedard\BlogTags\Components\blogTags'       => 'blogTags',
-            'Bedard\BlogTags\Components\blogTagSearch'  => 'blogTagSearch',
-            'Bedard\BlogTags\Components\blogRelated'    => 'blogRelated',
+            'Bedard\BlogTags\Components\BlogTags'       => 'blogTags',
+            'Bedard\BlogTags\Components\BlogTagSearch'  => 'blogTagSearch',
+            'Bedard\BlogTags\Components\BlogRelated'    => 'blogRelated',
         ];
     }
 

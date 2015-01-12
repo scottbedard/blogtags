@@ -14,7 +14,7 @@ class BlogTags extends ComponentBase
     {
         return [
             'name'        => 'Tags List',
-            'description' => 'Displays a list of tags'
+            'description' => 'Displays a list of tags.'
         ];
     }
 
@@ -34,7 +34,8 @@ class BlogTags extends ComponentBase
                 'options' => [
                     1 => 'Hide',
                     0 => 'Show'
-                ]
+                ],
+                'default'           => 'Hide'
             ]
         ];
     }

@@ -1,7 +1,6 @@
 <?php namespace Bedard\BlogTags\Models;
 
 use Model;
-use ValidationException;
 
 /**
  * Tag Model

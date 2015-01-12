@@ -28,10 +28,24 @@ class BlogTagSearch extends ComponentBase
     {
         return [
             'tag' => [
-                'title'       => 'Tag',
-                'description' => 'The URL parameter used to search for posts.',
-                'default'     => '{{ :tag }}',
-                'type'        => 'string'
+                'title'         => 'Tag',
+                'description'   => 'The URL parameter used to search for posts.',
+                'default'       => '{{ :tag }}',
+                'type'          => 'string'
+            ],
+            'page' => [
+                'title'         => 'Page',
+                'description'   => 'The URL parameter defining the page of results.',
+                'default'       => '{{ :page }}',
+                'type'          => 'string'
+            ],
+            'resultsPerPage' => [
+                'title'         => 'Results per page',
+                'description'   => 'The number of posts to display per page. Set to zero to display all results.',
+                'default'       => '10',
+                'type'          => 'string',
+                'validationPattern' => '^(0+)?[1-9]\d*$',
+                'validationMessage' => 'Results per page must be a whole number greater than or equal to zero.'
             ]
         ];
     }
