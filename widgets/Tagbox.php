@@ -43,7 +43,7 @@ class Tagbox extends FormWidgetBase
     /**
      * {@inheritDoc}
      */
-    public function getSaveData($value)
+    public function getSaveValue($value)
     {
         return FormField::NO_SAVE_DATA;
     }
