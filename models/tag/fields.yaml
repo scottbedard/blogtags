@@ -3,6 +3,11 @@
 # ===================================
 
 fields:
-    id:
-        label: ID
-        disabled: true
+    name:
+        label: Tag
+
+    posts:
+        label: Posts
+        type: relation
+        nameFrom: title
+        emptyOption: No posts available.

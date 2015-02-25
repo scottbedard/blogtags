@@ -3,6 +3,25 @@
 # ===================================
 
 columns:
-    id:
-        label: ID
-        searchable: true
+
+    name:
+        label: Tag
+
+    posts:
+        label: Posts
+        select: >
+            (
+                select count(*)
+                from `bedard_blogtags_post_tag`
+                where `bedard_blogtags_post_tag`.`tag_id` = `bedard_blogtags_tags`.`id`
+            )
+
+    created_at:
+        label: rainlab.blog::lang.post.created
+        type: date
+        invisible: true
+
+    updated_at:
+        label: rainlab.blog::lang.post.updated
+        type: date
+        invisible: true

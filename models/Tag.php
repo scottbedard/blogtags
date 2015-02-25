@@ -1,6 +1,7 @@
 <?php namespace Bedard\BlogTags\Models;
 
 use Model;
+use RainLab\Blog\Models\Post;
 
 /**
  * Tag Model
@@ -18,7 +19,11 @@ class Tag extends Model
      * @var array Relations
      */
     public $belongsToMany = [
-        'posts' => ['RainLab\Blog\Models\Post', 'table' => 'bedard_blogtags_post_tag', 'order' => 'published_at desc', 'scope' => 'isPublished']
+        'posts' => [
+            'RainLab\Blog\Models\Post',
+            'table' => 'bedard_blogtags_post_tag',
+            'order' => 'published_at desc'
+        ]
     ];
 
     /**
@@ -30,14 +35,13 @@ class Tag extends Model
      * @var array Validation rules
      */
     public $rules = [
-        'name' => 'required|regex:/^[a-z0-9-]+$/'
+        'name' => 'required|unique:bedard_blogtags_tags|regex:/^[a-z0-9-]+$/'
     ];
 
-    /**
-     * @var array Validation error messages
-     */
     public $customMessages = [
-        'name.regex' => 'Tags may contain only alpha-numeric characters and hyphens.'
+        'name.required' => 'A tag name is required.',
+        'name.unique'   => 'A tag by that name already exists.',
+        'name.regex'    => 'Tags may only contain alpha-numeric characters and hyphens.'
     ];
 
     /**

@@ -1,0 +1,31 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: Tag
+
+# Model Form Field configuration
+form: $/bedard/blogtags/models/tag/fields.yaml
+
+# Model Class name
+modelClass: Bedard\BlogTags\Models\Tag
+
+# Default redirect location
+defaultRedirect: bedard/blogtags/tags
+
+# Create page
+create:
+    title: Create Tag
+    redirect: bedard/blogtags/tags/update/:id
+    redirectClose: bedard/blogtags/tags
+
+# Update page
+update:
+    title: Edit Tag
+    redirect: bedard/blogtags/tags
+    redirectClose: bedard/blogtags/tags
+
+# Preview page
+preview:
+    title: Preview Tag

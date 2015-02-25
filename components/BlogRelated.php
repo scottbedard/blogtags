@@ -1,17 +1,20 @@
 <?php namespace Bedard\BlogTags\Components;
 
 use Cms\Classes\ComponentBase;
+use DB;
 use RainLab\Blog\Models\Post;
 
 class BlogRelated extends ComponentBase
 {
-
-    private $query;
-    private $tagIds;
+    /**
+     * @var Illuminate\Database\Eloquent\Collection | array
+     */
+    private $posts = [];
 
     /**
      * Component Registration
-     * @return array
+     *
+     * @return  array
      */
     public function componentDetails()
     {
@@ -23,7 +26,8 @@ class BlogRelated extends ComponentBase
 
     /**
      * Component Properties
-     * @return array
+     *
+     * @return  array
      */
     public function defineProperties()
     {
@@ -36,22 +40,35 @@ class BlogRelated extends ComponentBase
             ],
             'results' => [
                 'title'             => 'Results',
-                'description'       => 'The number of results to return.',
+                'description'       => 'Number of related posts to display (zero displays all related posts).',
                 'type'              => 'string',
-                'default'           => '6',
-                'validationPattern' => '^[0-9]*$',
-                'validationMessage' => 'The results must be a whole number greater than zero.',
+                'default'           => '5',
+                'validationPattern' => '^[0-9]+$',
+                'validationMessage' => 'The results must be a number.',
                 'showExternalParam' => false
             ],
-            'method' => [
-                'title'             => 'Method',
-                'description'       => 'The method used to search for related posts.',
+            'orderBy' => [
+                'title'             => 'Sort by',
+                'description'       => 'The value used to sort related posts.',
                 'type'              => 'dropdown',
                 'options' => [
-                    'newestRelated' => 'Newest Related',
-                    'mostRelated'   => 'Most Related'
+                    false           => 'Relevance (# of shared tags)',
+                    'title'         => 'Title',
+                    'published_at'  => 'Published at',
+                    'updated_at'    => 'Updated at',
                 ],
-                'default'           => 'newestRelated',
+                'default'           => false,
+                'showExternalParam' => false
+            ],
+            'direction' => [
+                'title'             => 'Order',
+                'description'       => 'The order to sort related posts in.',
+                'type'              => 'dropdown',
+                'options' => [
+                    'asc'           => 'Ascending',
+                    'desc'          => 'Descending',
+                ],
+                'default'           => 'desc',
                 'showExternalParam' => false
             ]
         ];
@@ -62,71 +79,49 @@ class BlogRelated extends ComponentBase
      */
     public function onRun()
     {
+        // Load the target post
         $post = Post::where('slug', $this->property('slug'))
             ->with('tags')
             ->first();
 
-        if (!$post) return;
+        // Abort if there is no source, or it has no tags
+        if (!$post || (!$tagIds = $post->tags->lists('id')))
+            return;
 
-        $this->tagIds = [];
-        foreach ($post->tags as $tag) $this->tagIds[] = $tag->id;
-
-        if (empty($this->tagIds)) return;
-
-        $this->query = Post::isPublished()
+        // Start building our query for related posts
+        $query = Post::isPublished()
             ->where('id', '<>', $post->id)
-            ->whereHas('tags', function($query) {
-                $query->whereIn('id', $this->tagIds);
+            ->whereHas('tags', function($tag) use ($tagIds) {
+                $tag->whereIn('id', $tagIds);
             })
             ->with('tags');
+
+        // Sort the related posts
+        $subQuery = DB::raw('(
+            select count(*)
+            from `bedard_blogtags_post_tag`
+            where `bedard_blogtags_post_tag`.`post_id` = `rainlab_blog_posts`.`id`
+            and `bedard_blogtags_post_tag`.`tag_id` in ('.implode(', ', $tagIds).')
+        )');
+        $key = $this->property('orderBy') ?: $subQuery;
+        $query->orderBy($key, $this->property('direction'));
+
+        // Limit the number of results
+        if ($take = intval($this->property('results')))
+            $query->take($take);
+
+        // Execute the query
+        $this->posts = $query->get();
     }
 
     /**
-     * Returns related posts
+     * Returns the related posts
+     *
+     * @return  Illuminate\Database\Eloquent\Collection | array
      */
     public function posts()
     {
-        if (!$this->query) return [];
-        return $this->property('method') == 'mostRelated'
-            ? $this->mostRelated()
-            : $this->newestRelated();
-    }
-
-    /**
-     * Queries related posts
-     */
-    private function newestRelated()
-    {
-        return $this->query
-            ->take($this->property('results'))
-            ->get();
-    }
-
-    /**
-     * Queries related posts, and sorts them by relevance
-     */
-    private function mostRelated()
-    {
-        $results = $matches = [];
-        $related = $this->query->get();
-
-        foreach ($related as $post) {
-            $overlap = 0;
-            foreach ($post->tags as $tag)
-                if (in_array($tag->id, $this->tagIds)) $overlap++;
-            $matches[$post->id] = $overlap;
-        }
-        arsort($matches);
-
-        foreach ($matches as $id => $overlap) {
-            if (count($results) >= $this->property('results')) break;
-            foreach ($related as $post) {
-                if ($post->id == $id) $results[] = $post;
-                continue;
-            }
-        }
-
-        return $results;
+        return $this->posts;
     }
 
 }

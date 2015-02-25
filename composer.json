@@ -1,0 +1,21 @@
+{
+    "name": "bedard/blogtags",
+    "description": "Enables tagging of blog posts.",
+    "homepage": "http://github.com/scottbedard/blogtags",
+    "keywords": ["october", "rainlab", "blog", "tags"],
+    "authors": [
+        {
+            "name": "Scott Bedard",
+            "email": "scottbedard90@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Bedard\\BlogTags\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "owl/tagbox": "~1.0@dev"
+    }
+}

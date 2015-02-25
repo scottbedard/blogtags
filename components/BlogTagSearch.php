@@ -10,43 +10,43 @@ class BlogTagSearch extends ComponentBase
     /**
      * @var Bedard\BlogTags\Models\Tag
      */
-    public $tag;
+    private $tag;
 
     /**
-     * @var integer                 The total number of posts with the tag
+     * @var integer             The total number of posts with the tag
      */
     public $totalPosts;
 
     /**
-     * @var integer                 The number of posts on the current page
+     * @var integer             The number of posts on the current page
      */
     public $postsOnPage;
 
     /**
-     * @var integer                 The current page
+     * @var integer             The current page
      */
     public $currentPage;
 
     /**
-     * @var integer                 The number of results per page
+     * @var integer             The number of results per page
      */
     public $resultsPerPage;
 
     /**
-     * @var boolean / integer       The previous page, or false for first page
+     * @var boolean / integer   The previous page, or false for first page
      */
     public $previousPage;
 
     /**
-     * @var boolean / integer       The next page, or false for last page
+     * @var boolean / integer   The next page, or false for last page
      */
     public $nextPage;
 
     /**
-     * @var integer                 The last page
+     * @var integer             The last page
      */
     public $lastPage;
-    
+
 
     /**
      * Component Registration
@@ -74,26 +74,21 @@ class BlogTagSearch extends ComponentBase
                 'type'          => 'string'
             ],
             'pagination' => [
-                'title'         => 'Pagination',
+                'title'         => 'Paginate results',
                 'description'   => 'Determines if the results are paginated or not.',
-                'default'       => 0,
-                'type'          => 'dropdown',
-                'options' => [
-                    1 => 'On',
-                    0 => 'Off'
-                ],
+                'type'          => 'checkbox',
                 'showExternalParam' => false
             ],
             'page' => [
                 'title'         => 'Page',
-                'description'   => 'The URL parameter defining the page of results.',
+                'description'   => 'The URL parameter defining the page number.',
                 'default'       => '{{ :page }}',
                 'type'          => 'string'
             ],
             'resultsPerPage' => [
-                'title'         => 'Number of results to display per page.',
+                'title'         => 'Results',
                 'description'   => 'The number of posts to display per page.',
-                'default'       => '10',
+                'default'       => 10,
                 'type'          => 'string',
                 'validationPattern' => '^(0+)?[1-9]\d*$',
                 'validationMessage' => 'Results per page must be a positive whole number.'
@@ -166,5 +161,25 @@ class BlogTagSearch extends ComponentBase
         $this->nextPage = $this->currentPage < $this->lastPage
             ? $this->currentPage + 1
             : false;
+    }
+
+    /**
+     * Returns the tag being searched for
+     *
+     * @return  Bedard\BlogTags\Models\Tag
+     */
+    public function tag()
+    {
+        return $this->tag;
+    }
+
+    /**
+     * Returns the posts searched for
+     *
+     * @return  Illuminate\Database\Eloquent\Collection
+     */
+    public function results()
+    {
+        return $this->tag->posts;
     }
 }

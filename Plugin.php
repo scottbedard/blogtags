@@ -1,5 +1,8 @@
 <?php namespace Bedard\BlogTags;
 
+use Backend;
+use Bedard\BlogTags\Models\Tag;
+use Event;
 use System\Classes\PluginBase;
 use RainLab\Blog\Controllers\Posts as PostsController;
 use RainLab\Blog\Models\Post as PostModel;
@@ -16,35 +19,44 @@ class Plugin extends PluginBase
     public $require = ['RainLab.Blog'];
 
     /**
-     * Returns information about this plugin.
-     * @return array
+     * @var array   Container for tags to be attached
+     */
+    private $tags = [];
+
+    /**
+     * Returns information about this plugin
+     *
+     * @return  array
      */
     public function pluginDetails()
     {
         return [
             'name'        => 'Blog Tags Extension',
-            'description' => 'Enables tagging of blog posts.',
+            'description' => 'Enables tagging blog posts and display related articles.',
             'author'      => 'Scott Bedard',
             'icon'        => 'icon-tags'
         ];
     }
 
     /*
-     * Register the tagbox form widget
+     * Owl Registration
+     *
+     * @return  array
      */
     public function registerFormWidgets()
     {
         return [
-            'Bedard\BlogTags\Widgets\Tagbox' => [
+            'Owl\FormWidgets\Tagbox\Widget' => [
                 'label' => 'Tagbox',
-                'alias' => 'tagbox'
-            ]
+                'code'  => 'owl-tagbox'
+            ],
         ];
     }
 
     /**
      * Register components
-     * @return array
+     *
+     * @return  array
      */
     public function registerComponents()
     {
@@ -55,26 +67,65 @@ class Plugin extends PluginBase
         ];
     }
 
-    /**
-     * Add tags field to blog posts
-     */
     public function boot()
     {
-        // Extend the posts model to establish the new tags relationship
-        PostModel::extend(function ($model) {
-            $model->belongsToMany['tags'] = ['Bedard\BlogTags\Models\Tag', 'table' => 'bedard_blogtags_post_tag', 'order' => 'name'];
+        // Extend the navigation
+        Event::listen('backend.menu.extendItems', function($manager) {
+           $manager->addSideMenuItems('RainLab.Blog', 'blog', [
+                'tags' => [
+                    'label'       => 'Tags',
+                    'icon'        => 'icon-tags',
+                    'code'        => 'tags',
+                    'owner'       => 'RainLab.Blog',
+                    'url'         => Backend::url('bedard/blogtags/tags')
+                ],
+            ]);
         });
 
-        // Extend the controller and add the tags field
+        // Extend the controller
         PostsController::extendFormFields(function($form, $model, $context) {
             if (!$model instanceof PostModel) return;
             $form->addSecondaryTabFields([
-                'tags' => [
-                    'label' => 'Tags',
-                    'tab'   => 'rainlab.blog::lang.post.tab_categories',
-                    'type'  => 'tagbox'
+                'tagbox' => [
+                    'label'     => 'Tags',
+                    'tab'       => 'rainlab.blog::lang.post.tab_categories',
+                    'type'      => 'owl-tagbox',
+                    'slugify'   => true
                 ]
             ]);
+        });
+
+        // Extend the model
+        PostModel::extend(function($model) {
+            // Relationship
+            $model->belongsToMany['tags'] = [
+                'Bedard\BlogTags\Models\Tag',
+                'table' => 'bedard_blogtags_post_tag',
+                'order' => 'name'
+            ];
+
+            // getTagboxAttribute()
+            $model->addDynamicMethod('getTagboxAttribute', function() use ($model) {
+                return $model->tags()->lists('name');
+            });
+
+            // setTagboxAttribute()
+            $model->addDynamicMethod('setTagboxAttribute', function($tags) use ($model) {
+                $this->tags = $tags;
+            });
+        });
+
+        // Attach tags to model
+        PostModel::saved(function($model) {
+            if ($this->tags) {
+                $ids = [];
+                foreach ($this->tags as $name) {
+                    $create = Tag::firstOrCreate(['name' => $name]);
+                    $ids[] = $create->id;
+                }
+
+                $model->tags()->sync($ids);
+            }
         });
     }
 }
