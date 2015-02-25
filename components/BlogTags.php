@@ -9,7 +9,7 @@ class BlogTags extends ComponentBase
     /**
      * @var Illuminate\Database\Eloquent\Collection | array
      */
-    private $tags = [];
+    public $tags = [];
 
     /**
      * Component Registration
@@ -101,15 +101,5 @@ class BlogTags extends ComponentBase
             $query->take($take);
 
         $this->tags = $query->get();
-    }
-
-    /**
-     * Returns tags
-     *
-     * @return  Illuminate\Database\Eloquent\Collection | array
-     */
-    public function tags()
-    {
-        return $this->tags;
     }
 }

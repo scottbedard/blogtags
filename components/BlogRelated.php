@@ -9,7 +9,7 @@ class BlogRelated extends ComponentBase
     /**
      * @var Illuminate\Database\Eloquent\Collection | array
      */
-    private $posts = [];
+    public $posts = [];
 
     /**
      * Component Registration
@@ -112,16 +112,6 @@ class BlogRelated extends ComponentBase
 
         // Execute the query
         $this->posts = $query->get();
-    }
-
-    /**
-     * Returns the related posts
-     *
-     * @return  Illuminate\Database\Eloquent\Collection | array
-     */
-    public function posts()
-    {
-        return $this->posts;
     }
 
 }

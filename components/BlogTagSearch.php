@@ -10,7 +10,12 @@ class BlogTagSearch extends ComponentBase
     /**
      * @var Bedard\BlogTags\Models\Tag
      */
-    private $tag;
+    public $tag;
+
+    /**
+     * @var Illuminate\Database\Eloquent\Collection | array
+     */
+    public $posts = [];
 
     /**
      * @var integer             The total number of posts with the tag
@@ -123,6 +128,9 @@ class BlogTagSearch extends ComponentBase
             }])
             ->first();
 
+        // Store the posts in a better container
+        $this->posts = $this->tag->posts;
+
         // Count the posts being returned
         $this->postsOnPage = $this->tag
             ? count($this->tag->posts)
@@ -161,25 +169,5 @@ class BlogTagSearch extends ComponentBase
         $this->nextPage = $this->currentPage < $this->lastPage
             ? $this->currentPage + 1
             : false;
-    }
-
-    /**
-     * Returns the tag being searched for
-     *
-     * @return  Bedard\BlogTags\Models\Tag
-     */
-    public function tag()
-    {
-        return $this->tag;
-    }
-
-    /**
-     * Returns the posts searched for
-     *
-     * @return  Illuminate\Database\Eloquent\Collection
-     */
-    public function results()
-    {
-        return $this->tag->posts;
     }
 }

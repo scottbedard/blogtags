@@ -9,11 +9,6 @@
             "email": "scottbedard90@gmail.com"
         }
     ],
-    "autoload": {
-        "psr-4": {
-            "Bedard\\BlogTags\\Tests\\": "tests/"
-        }
-    },
     "require": {
         "php": ">=5.4.0",
         "owl/tagbox": "~1.0@dev"

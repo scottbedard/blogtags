@@ -11,3 +11,5 @@
   - Replace deprecated method
 1.2.0:
   - Upgrades for RC, and adds several new features.
+1.2.1:
+  - Removed getters to make plugin more accessable.
