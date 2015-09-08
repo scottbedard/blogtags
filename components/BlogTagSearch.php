@@ -127,14 +127,16 @@ class BlogTagSearch extends ComponentBase
                       ->take($this->resultsPerPage);
             }])
             ->first();
-
-        // Store the posts in a better container
-        $this->posts = $this->tag->posts;
-
-        // Count the posts being returned
-        $this->postsOnPage = $this->tag
-            ? count($this->tag->posts)
-            : 0;
+        
+        if ($this->tag) {
+            // Store the posts in a better container
+            $this->posts = $this->tag->posts;
+    
+            // Count the posts being returned
+            $this->postsOnPage = $this->tag
+                ? count($this->tag->posts)
+                : 0;
+        }
     }
 
     /**
