@@ -1,5 +1,6 @@
 <?php namespace Bedard\BlogTags\Components;
 
+use Cms\Classes\Page;
 use Bedard\BlogTags\Models\Tag;
 use Cms\Classes\ComponentBase;
 use Rainlab\Blog\Models\Post;
@@ -52,6 +53,12 @@ class BlogTagSearch extends ComponentBase
      */
     public $lastPage;
 
+     /**
+     * Reference to the page name for linking to posts.
+     * @var string
+     */
+    public $postPage;
+
 
     /**
      * Component Registration
@@ -97,6 +104,13 @@ class BlogTagSearch extends ComponentBase
                 'type'          => 'string',
                 'validationPattern' => '^(0+)?[1-9]\d*$',
                 'validationMessage' => 'Results per page must be a positive whole number.'
+            ],
+            'postPage' => [
+                'title'       => 'Post page',
+                'description' => 'Page to show linked posts',
+                'type'        => 'dropdown',
+                'default'     => 'blog/post',
+                'group'       => 'Links',
             ]
         ];
     }
@@ -131,10 +145,25 @@ class BlogTagSearch extends ComponentBase
         // Store the posts in a better container
         $this->posts = $this->tag->posts;
 
+        /*
+         * Add a "url" helper attribute for linking to each post
+        */
+        $this->posts->each(function($post)
+        {
+           $post->setUrl($this->postPage,$this->controller);
+        });
+
+
         // Count the posts being returned
         $this->postsOnPage = $this->tag
             ? count($this->tag->posts)
             : 0;
+    }
+
+
+    public function getPostPageOptions()
+    {
+        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
     }
 
     /**
