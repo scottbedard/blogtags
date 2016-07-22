@@ -30,5 +30,7 @@ The `blogTagSearch` component returns all posts with a particular tag.
 - **Paginate results** - Determines if the results are paginated or not.
 - **Page** - The URL parameter defining the page number.
 - **Results** - Number of posts to display per page.
+- **Blog post page** - Link to page, where blog post to be displayed.
+
 
 This component also provides several pagination variables. They are ```totalPosts```, ```postsOnPage```, ```currentPage```, ```resultsPerPage```, ```previousPage```, ```nextPage```, and ```lastPage```. For an example of how to paginate your results, please review the pagination partial. The posts may be loaded through the ```Page``` URL parameter, or through the AJAX framework via the ```onLoadPage()``` method.
