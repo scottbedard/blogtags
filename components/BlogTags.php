@@ -90,8 +90,8 @@ class BlogTags extends ComponentBase
         // Sort the tags
         $subQuery = DB::raw('(
             select count(*)
-            from `bedard_blogtags_post_tag`
-            where `bedard_blogtags_post_tag`.`tag_id` = `bedard_blogtags_tags`.`id`
+            from bedard_blogtags_post_tag
+            where bedard_blogtags_post_tag.tag_id = bedard_blogtags_tags.id
         )');
         $key = $this->property('orderBy') ?: $subQuery;
         $query->orderBy($key, $this->property('direction'));
