@@ -129,12 +129,13 @@ class BlogTagSearch extends ComponentBase
             ->first();
 
         // Store the posts in a better container
-        $this->posts = $this->tag->posts;
-
-        // Count the posts being returned
-        $this->postsOnPage = $this->tag
-            ? count($this->tag->posts)
-            : 0;
+        if(empty($this->tag)) {
+            $this->posts = null;
+            $this->postsOnPage = 0;
+        } else {
+            $this->posts = $this->tag->posts;
+            $this->postsOnPage = count($this->posts);
+        }
     }
 
     /**
@@ -151,7 +152,7 @@ class BlogTagSearch extends ComponentBase
         // Calculate the results per page
         $this->resultsPerPage = $this->property('pagination')
             ? intval($this->property('resultsPerPage'))
-            : $this->totalPosts;
+            : max(1, $this->totalPosts);
 
         // Calculate the last page
         $this->lastPage = ceil($this->totalPosts / $this->resultsPerPage);

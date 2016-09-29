@@ -1,6 +1,12 @@
-<h1>Search results for "{{ __SELF__.tag.name }}"</h1>
+<h1>Search results for "{{ __SELF__.properties.tag }}"</h1>
+
+{% if __SELF__.posts %}
 <ul>
-    {% for Post in __SELF__.tag.posts %}
+    {% for Post in __SELF__.posts %}
         <li>{{ Post.title }}</li>
     {% endfor %}
 </ul>
+
+{% else %}
+No posts found.
+{%endif%}
