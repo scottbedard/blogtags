@@ -14,6 +14,7 @@ The `blogRelated` component can be used to display a post's related articles.
 - **Sort by** - How to sort the related articles (by relevance, title, published date, or updated date).
 - **Order** - Direction to sort the results (ascending or descending).
 - **Blog post page** - Link to page, where blog post to be displayed.
+- **Blog post categories** - Links to pages, where blog post categories to be displayed.
 
 #### Tag List
 The `blogTags` component is can be used to display a list of all tags.
