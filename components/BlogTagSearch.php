@@ -59,6 +59,11 @@ class BlogTagSearch extends ComponentBase
      */
     public $postPage;
 
+    /**
+     * @var string Reference to the page name for linking to categories.
+     */
+    public $categoryPage;
+
 
     /**
      * Component Registration
@@ -111,6 +116,13 @@ class BlogTagSearch extends ComponentBase
                 'type'        => 'dropdown',
                 'default'     => 'blog/post',
                 'group'       => 'Links',
+            ],
+            'categoryPage' => [
+                'title'       => 'rainlab.blog::lang.settings.posts_category',
+                'description' => 'rainlab.blog::lang.settings.posts_category_description',
+                'type'        => 'dropdown',
+                'default'     => 'blog/category',
+                'group'       => 'Links',
             ]
         ];
     }
@@ -120,6 +132,9 @@ class BlogTagSearch extends ComponentBase
      */
     public function onRun()
     {
+        $this->postPage = $this->page['postPage'] = $this->property('postPage');
+        $this->categoryPage = $this->page['categoryPage'] = $this->property('categoryPage');
+
         $this->onLoadPage($this->property('page'));
     }
 
@@ -153,12 +168,23 @@ class BlogTagSearch extends ComponentBase
             // Add a "url" helper attribute for linking to each post
             $this->posts->each(function($post) {
                 $post->setUrl($this->postPage,$this->controller);
+
+                if($post->categories->count()) {
+                    $post->categories->each(function($category){
+                        $category->setUrl($this->categoryPage, $this->controller);
+                    });
+                }
             });
         }
     }
 
 
     public function getPostPageOptions()
+    {
+        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
+    }
+
+    public function getCategoryPageOptions()
     {
         return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
     }
