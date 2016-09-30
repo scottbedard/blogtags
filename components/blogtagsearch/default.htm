@@ -2,8 +2,10 @@
 
 {% if __SELF__.posts %}
 <ul>
-    {% for Post in __SELF__.posts %}
-        <li>{{ Post.title }}</li>
+
+    {% for Post in __SELF__.tag.posts %}
+    {{php_var_dump(Post)}}
+         <a href="{{Post.url}}"><li>{{ Post.title }}</li></a>
     {% endfor %}
 </ul>
 
