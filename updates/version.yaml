@@ -13,3 +13,5 @@
   - Upgrades for RC, and adds several new features.
 1.2.1:
   - Removed getters to make plugin more accessible.
+1.3.0:
+  - PostgreSQL support and various bug fixes
