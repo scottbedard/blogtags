@@ -1,17 +1,9 @@
-<h1>Search results for "{{ __SELF__.tag.name }}"</h1>
+<h1>Search results for "{{ __SELF__.properties.tag }}"</h1>
 
 {% if __SELF__.posts %}
     <ul>
-        {% for Post in __SELF__.tag.posts %}
-             <li>
-                 <a href="{{Post.url}}">{{ Post.title }}</a>
-                 {% if Post.categories %}
-                 - published in
-                    {% for category in Post.categories %}
-                        <a href="{{category.url|e}}">{{category.name}}</a>{% if not loop.last %}, {% endif %}
-                    {% endfor %}
-                 {% endif %}
-             </li>
+        {% for Post in __SELF__.posts %}
+            <li>{{ Post.title }}</li>
         {% endfor %}
     </ul>
 {% else %}
