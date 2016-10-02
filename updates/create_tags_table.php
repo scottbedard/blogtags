@@ -3,17 +3,23 @@
 use October\Rain\Database\Updates\Migration;
 use Schema;
 use System\Classes\PluginManager;
+use Illuminate\Support\Facades\DB;
 
 class CreateTagsTable extends Migration
 {
+
+    private $dbType;
 
     public function up()
     {
         if(PluginManager::instance()->hasPlugin('RainLab.Blog'))
         {
+            $this->dbType = DB::connection()->getPdo()->getAttribute(\PDO::ATTR_DRIVER_NAME);
+
             Schema::create('bedard_blogtags_tags', function($table)
             {
-                $table->engine = 'InnoDB';
+                $this->dbSpecificSetup($table);
+
                 $table->increments('id');
                 $table->string('name')->unique()->nullable();
                 $table->timestamps();
@@ -21,7 +27,8 @@ class CreateTagsTable extends Migration
 
             Schema::create('bedard_blogtags_post_tag', function($table)
             {
-                $table->engine = 'InnoDB';
+                $this->dbSpecificSetup($table);
+
                 $table->integer('tag_id')->unsigned()->nullable()->default(null);
                 $table->integer('post_id')->unsigned()->nullable()->default(null);
                 $table->index(['tag_id', 'post_id']);
@@ -39,5 +46,22 @@ class CreateTagsTable extends Migration
             Schema::dropIfExists('bedard_blogtags_tags');
         }
     }
+
+
+    /**
+     * @param $table
+     */
+    private function dbSpecificSetup(&$table)
+    {
+        switch ($this->dbType) {
+            case 'pgsql':
+                break;
+            case 'mysql':
+                //@todo SET sql_mode='ANSI_QUOTES';
+                $table->engine = 'InnoDB';
+                break;
+        }
+    }
+
 
 }

@@ -1,5 +1,6 @@
 <?php namespace Bedard\BlogTags\Components;
 
+use Cms\Classes\Page;
 use Cms\Classes\ComponentBase;
 use DB;
 use RainLab\Blog\Models\Post;
@@ -10,6 +11,13 @@ class BlogRelated extends ComponentBase
      * @var Illuminate\Database\Eloquent\Collection | array
      */
     public $posts = [];
+
+    /**
+     * Reference to the page name for linking to posts.
+     * @var string
+     */
+    public $postPage;
+
 
     /**
      * Component Registration
@@ -70,8 +78,25 @@ class BlogRelated extends ComponentBase
                 ],
                 'default'           => 'desc',
                 'showExternalParam' => false
-            ]
+            ],
+            'postPage' => [
+                'title'       => 'Post page',
+                'description' => 'Page to show linked posts',
+                'type'        => 'dropdown',
+                'default'     => 'blog/post',
+                'group'       => 'Links',
+            ],
         ];
+    }
+
+    protected function prepareVars()
+    {
+        $this->postParam = $this->page['postParam'] = $this->property('postParam');
+    }
+
+    public function getPostPageOptions()
+    {
+        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
     }
 
     /**
@@ -79,6 +104,9 @@ class BlogRelated extends ComponentBase
      */
     public function onRun()
     {
+        //Prepare vars
+        $this->prepareVars();
+
         // Load the target post
         $post = Post::where('slug', $this->property('slug'))
             ->with('tags')
@@ -111,7 +139,18 @@ class BlogRelated extends ComponentBase
             $query->take($take);
 
         // Execute the query
-        $this->posts = $query->get();
+        $posts = $query->get();
+
+        /*
+         * Add a "url" helper attribute for linking to each post
+        */
+        $posts->each(function($post)
+        {
+           $post->setUrl($this->postPage,$this->controller);
+        });
+
+        $this->posts = $posts;
+
     }
 
 }

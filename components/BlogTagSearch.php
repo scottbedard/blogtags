@@ -1,5 +1,6 @@
 <?php namespace Bedard\BlogTags\Components;
 
+use Cms\Classes\Page;
 use Bedard\BlogTags\Models\Tag;
 use Cms\Classes\ComponentBase;
 use Rainlab\Blog\Models\Post;
@@ -52,6 +53,17 @@ class BlogTagSearch extends ComponentBase
      */
     public $lastPage;
 
+     /**
+     * Reference to the page name for linking to posts.
+     * @var string
+     */
+    public $postPage;
+
+    /**
+     * @var string Reference to the page name for linking to categories.
+     */
+    public $categoryPage;
+
 
     /**
      * Component Registration
@@ -97,6 +109,20 @@ class BlogTagSearch extends ComponentBase
                 'type'          => 'string',
                 'validationPattern' => '^(0+)?[1-9]\d*$',
                 'validationMessage' => 'Results per page must be a positive whole number.'
+            ],
+            'postPage' => [
+                'title'       => 'Post page',
+                'description' => 'Page to show linked posts',
+                'type'        => 'dropdown',
+                'default'     => 'blog/post',
+                'group'       => 'Links',
+            ],
+            'categoryPage' => [
+                'title'       => 'rainlab.blog::lang.settings.posts_category',
+                'description' => 'rainlab.blog::lang.settings.posts_category_description',
+                'type'        => 'dropdown',
+                'default'     => 'blog/category',
+                'group'       => 'Links',
             ]
         ];
     }
@@ -106,6 +132,9 @@ class BlogTagSearch extends ComponentBase
      */
     public function onRun()
     {
+        $this->postPage = $this->page['postPage'] = $this->property('postPage');
+        $this->categoryPage = $this->page['categoryPage'] = $this->property('categoryPage');
+
         $this->onLoadPage($this->property('page'));
     }
 
@@ -129,12 +158,35 @@ class BlogTagSearch extends ComponentBase
             ->first();
 
         // Store the posts in a better container
-        $this->posts = $this->tag->posts;
+        if(empty($this->tag)) {
+            $this->posts = null;
+            $this->postsOnPage = 0;
+        } else {
+            $this->posts = $this->tag->posts;
+            $this->postsOnPage = count($this->posts);
 
-        // Count the posts being returned
-        $this->postsOnPage = $this->tag
-            ? count($this->tag->posts)
-            : 0;
+            // Add a "url" helper attribute for linking to each post
+            $this->posts->each(function($post) {
+                $post->setUrl($this->postPage,$this->controller);
+
+                if($post->categories->count()) {
+                    $post->categories->each(function($category){
+                        $category->setUrl($this->categoryPage, $this->controller);
+                    });
+                }
+            });
+        }
+    }
+
+
+    public function getPostPageOptions()
+    {
+        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
+    }
+
+    public function getCategoryPageOptions()
+    {
+        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
     }
 
     /**
@@ -151,7 +203,7 @@ class BlogTagSearch extends ComponentBase
         // Calculate the results per page
         $this->resultsPerPage = $this->property('pagination')
             ? intval($this->property('resultsPerPage'))
-            : $this->totalPosts;
+            : max(1, $this->totalPosts);
 
         // Calculate the last page
         $this->lastPage = ceil($this->totalPosts / $this->resultsPerPage);
