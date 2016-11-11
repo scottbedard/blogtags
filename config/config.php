@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'slugify' => false,
+    'slugify' => true,
 ];
