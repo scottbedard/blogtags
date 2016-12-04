@@ -2,6 +2,7 @@
 
 use Backend;
 use Bedard\BlogTags\Models\Tag;
+use Config;
 use Event;
 use System\Classes\PluginBase;
 use RainLab\Blog\Controllers\Posts as PostsController;
@@ -90,7 +91,7 @@ class Plugin extends PluginBase
                     'label'   => 'Tags',
                     'tab'     => 'rainlab.blog::lang.post.tab_categories',
                     'type'    => 'owl-tagbox',
-                    'slugify' => true
+                    'slugify' => Config::get('bedard.blogtags::slugify', true),
                 ]
             ]);
         });

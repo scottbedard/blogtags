@@ -1,5 +1,6 @@
 <?php namespace Bedard\BlogTags\Models;
 
+use Config;
 use Model;
 use RainLab\Blog\Models\Post;
 
@@ -35,7 +36,7 @@ class Tag extends Model
      * @var array Validation rules
      */
     public $rules = [
-        'name' => 'required|unique:bedard_blogtags_tags|regex:/^[a-z0-9-]+$/'
+        'name' => 'required|unique:bedard_blogtags_tags'
     ];
 
     public $customMessages = [
@@ -44,12 +45,20 @@ class Tag extends Model
         'name.regex'    => 'Tags may only contain alpha-numeric characters and hyphens.'
     ];
 
+    public function __construct(array $attributes = [])
+    {
+        if (Config::get('bedard.blogtags::slugify', true)) {
+            $this->rules['name'] .= '|regex:/^[a-z0-9-]+$/';
+        }
+        parent::__construct($attributes);
+    }
+
     /**
      * Convert tag names to lower case
      */
     public function setNameAttribute($value)
     {
-        $this->attributes['name'] = strtolower($value);
+        $this->attributes['name'] = mb_strtolower($value);
     }
 
      /**
