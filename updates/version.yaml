@@ -18,3 +18,5 @@
 1.3.1:
   - Database maintenance. Updated all timestamp columns to be nullable.
   - update_timestamp_nullable.php
+1.3.2:
+  - Add slugify configuration option (vojtasvoboda)
