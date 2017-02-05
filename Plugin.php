@@ -19,11 +19,6 @@ class Plugin extends PluginBase
     public $require = ['RainLab.Blog'];
 
     /**
-     * @var array   Container for tags to be attached
-     */
-    private $tags = [];
-
-    /**
      * Returns information about this plugin
      *
      * @return  array
@@ -31,26 +26,11 @@ class Plugin extends PluginBase
     public function pluginDetails()
     {
         return [
-            'name'        => 'Blog Tags Extension',
-            'description' => 'Enables tagging blog posts and display related articles.',
+            'name'        => 'bedard.blogtags::lang.plugin.name',
+            'description' => 'bedard.blogtags::lang.plugin.description',
             'author'      => 'Scott Bedard',
             'icon'        => 'icon-tags',
             'homepage'    => 'https://github.com/scottbedard/blogtags'
-        ];
-    }
-
-    /*
-     * Owl Registration
-     *
-     * @return  array
-     */
-    public function registerFormWidgets()
-    {
-        return [
-            'Owl\FormWidgets\Tagbox\Widget' => [
-                'label' => 'Tagbox',
-                'code'  => 'owl-tagbox'
-            ]
         ];
     }
 
@@ -70,11 +50,11 @@ class Plugin extends PluginBase
 
     public function boot()
     {
-        // Extend the navigation
+        // extend the blog navigation
         Event::listen('backend.menu.extendItems', function($manager) {
            $manager->addSideMenuItems('RainLab.Blog', 'blog', [
                 'tags' => [
-                    'label' => 'Tags',
+                    'label' => 'bedard.blogtags::lang.navigation.tags',
                     'icon'  => 'icon-tags',
                     'code'  => 'tags',
                     'owner' => 'RainLab.Blog',
@@ -83,50 +63,26 @@ class Plugin extends PluginBase
             ]);
         });
 
-        // Extend the controller
-        PostsController::extendFormFields(function($form, $model, $context) {
-            if (!$model instanceof PostModel) return;
-            $form->addSecondaryTabFields([
-                'tagbox' => [
-                    'label'   => 'Tags',
-                    'tab'     => 'rainlab.blog::lang.post.tab_categories',
-                    'type'    => 'owl-tagbox',
-                    'slugify' => Config::get('bedard.blogtags::slugify', true),
-                ]
-            ]);
-        });
-
-        // Extend the model
+        // extend the post model
         PostModel::extend(function($model) {
-            // Relationship
             $model->belongsToMany['tags'] = [
                 'Bedard\BlogTags\Models\Tag',
                 'table' => 'bedard_blogtags_post_tag',
                 'order' => 'name'
             ];
-
-            // getTagboxAttribute()
-            $model->addDynamicMethod('getTagboxAttribute', function() use ($model) {
-                return $model->tags()->lists('name');
-            });
-
-            // setTagboxAttribute()
-            $model->addDynamicMethod('setTagboxAttribute', function($tags) use ($model) {
-                $this->tags = $tags;
-            });
         });
 
-        // Attach tags to model
-        PostModel::saved(function($model) {
-            if ($this->tags) {
-                $ids = [];
-                foreach ($this->tags as $name) {
-                    $create = Tag::firstOrCreate(['name' => $name]);
-                    $ids[] = $create->id;
-                }
-
-                $model->tags()->sync($ids);
-            }
+        // extend the post form
+        PostsController::extendFormFields(function($form, $model, $context) {
+            if (!$model instanceof PostModel) return;
+            $form->addSecondaryTabFields([
+                'tags' => [
+                    'label'         => 'bedard.blogtags::lang.form.label',
+                    'mode'          => 'relation',
+                    'tab'           => 'rainlab.blog::lang.post.tab_categories',
+                    'type'          => 'taglist',
+                ],
+            ]);
         });
     }
 }

@@ -40,9 +40,9 @@ class Tag extends Model
     ];
 
     public $customMessages = [
-        'name.required' => 'A tag name is required.',
-        'name.unique'   => 'A tag by that name already exists.',
-        'name.regex'    => 'Tags may only contain alpha-numeric characters and hyphens.'
+        'name.required' => 'bedard.blogtags::lang.form.name_required',
+        'name.unique'   => 'bedard.blogtags::lang.form.name_unique',
+        'name.regex'    => 'bedard.blogtags::lang.form.name_invalid',
     ];
 
     public function __construct(array $attributes = [])
@@ -50,6 +50,7 @@ class Tag extends Model
         if (Config::get('bedard.blogtags::slugify', true)) {
             $this->rules['name'] .= '|regex:/^[a-z0-9-]+$/';
         }
+
         parent::__construct($attributes);
     }
 
@@ -58,13 +59,18 @@ class Tag extends Model
      */
     public function setNameAttribute($value)
     {
+        if (Config::get('bedard.blogtags::slugify', true)) {
+            $value = str_replace(' ', '-', $value);
+        }
+
         $this->attributes['name'] = mb_strtolower($value);
     }
 
      /**
      * Sets the "url" attribute with a URL to this object
-     * @param string $pageName
-     * @param Cms\Classes\Controller $controller
+     *
+     * @param string                    $pageName
+     * @param Cms\Classes\Controller    $controller
      */
     public function setUrl($pageName, $controller)
     {
@@ -72,7 +78,7 @@ class Tag extends Model
             'id' => $this->id,
             'slug' => $this->slug,
         ];
-       
+
         return $this->url = $controller->pageUrl($pageName, $params);
     }
 }
