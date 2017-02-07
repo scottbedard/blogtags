@@ -74,14 +74,17 @@ class Plugin extends PluginBase
 
         // extend the post form
         PostsController::extendFormFields(function($form, $model, $context) {
-            if (!$model instanceof PostModel) return;
+            if (!$model instanceof PostModel) {
+                return;
+            }
+
             $form->addSecondaryTabFields([
                 'tags' => [
-                    'label'         => 'bedard.blogtags::lang.form.label',
-                    'mode'          => 'relation',
-                    'tab'           => 'rainlab.blog::lang.post.tab_categories',
-                    'type'          => 'taglist',
-                ],
+                    'label' => 'bedard.blogtags::lang.form.label',
+                    'mode'  => 'relation',
+                    'tab'   => 'rainlab.blog::lang.post.tab_categories',
+                    'type'  => 'taglist'
+                ]
             ]);
         });
     }
