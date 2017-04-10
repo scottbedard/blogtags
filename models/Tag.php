@@ -42,28 +42,20 @@ class Tag extends Model
     public $customMessages = [
         'name.required' => 'bedard.blogtags::lang.form.name_required',
         'name.unique'   => 'bedard.blogtags::lang.form.name_unique',
-        'name.regex'    => 'bedard.blogtags::lang.form.name_invalid',
     ];
 
-    public function __construct(array $attributes = [])
-    {
-        if (Config::get('bedard.blogtags::slugify', true)) {
-            $this->rules['name'] .= '|regex:/^[a-z0-9-]+$/';
-        }
-
-        parent::__construct($attributes);
-    }
-
     /**
-     * Convert tag names to lower case
+     * Convert tag names to slugs
      */
-    public function setNameAttribute($value)
+    public function setSlugAttribute($value)
     {
-        if (Config::get('bedard.blogtags::slugify', true)) {
-            $value = str_replace(' ', '-', $value);
-        }
+        $newSlug = str_slug($value);
+        $this->attributes['slug'] = $newSlug;
 
-        $this->attributes['name'] = mb_strtolower($value);
+        if (empty($newSlug))
+        {
+            $this->attributes['slug'] = str_slug($this->attributes['name']);
+        }
     }
 
      /**
