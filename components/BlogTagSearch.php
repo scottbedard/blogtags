@@ -150,7 +150,7 @@ class BlogTagSearch extends ComponentBase
         $this->calculatePagination();
 
         // Query the tag with it's posts
-        $this->tag = Tag::where('name', $this->property('tag'))
+        $this->tag = Tag::where('slug', $this->property('tag'))
             ->with(['posts' => function($posts) {
                 $posts->skip($this->resultsPerPage * ($this->currentPage - 1))
                       ->take($this->resultsPerPage);

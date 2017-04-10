@@ -5,9 +5,20 @@
 fields:
     name:
         label: Tag
+        span: left
+        type: text
+
+    slug:
+        label: Slug
+        span: right
+        placeholder: slug
+        preset:
+            field: name
+            type: slug
 
     posts:
         label: Posts
         type: relation
         nameFrom: title
         emptyOption: No posts available.
+        span: auto
