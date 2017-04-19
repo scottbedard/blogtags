@@ -28,3 +28,8 @@
   - Add Hungarian translation (gergo85)
 1.3.6:
   - Add German translation (justb81)
+1.3.7:
+  - Add slug field to tags (Fl0Cri)
+  - add_slug_column.php
+1.4.0:
+  - !!! A slug is now created for each tag.

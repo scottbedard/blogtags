@@ -3,6 +3,7 @@
 use Schema;
 use October\Rain\Database\Updates\Migration;
 use Bedard\BlogTags\Models\Tag;
+use System\Classes\PluginManager;
 
 class AddTagSlug extends Migration
 {
@@ -15,15 +16,10 @@ class AddTagSlug extends Migration
 
         Schema::table('bedard_blogtags_tags', function($table)
         {
-            $table->string('slug', 255);
+            $table->string('slug')->unique()->nullable();
         });
 
         $this->fillSlugs();
-
-        Schema::table('bedard_blogtags_tags', function($table)
-        {
-            $table->unique('slug');
-        });
     }
 
     public function down()
@@ -43,8 +39,7 @@ class AddTagSlug extends Migration
     {
         $tags = Tag::all();
 
-        foreach ($tags as $tag)
-        {
+        foreach ($tags as $tag) {
             $tag->slug = str_slug($tag->name);
             $tag->save();
         }

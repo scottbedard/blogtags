@@ -30,7 +30,10 @@ class Tag extends Model
     /**
      * @var array Fillable fields
      */
-    public $fillable = ['name'];
+    public $fillable = [
+        'name',
+        'slug',
+    ];
 
     /**
      * @var array Validation rules
@@ -42,20 +45,35 @@ class Tag extends Model
     public $customMessages = [
         'name.required' => 'bedard.blogtags::lang.form.name_required',
         'name.unique'   => 'bedard.blogtags::lang.form.name_unique',
+        'name.regex'    => 'bedard.blogtags::lang.form.name_invalid',
     ];
 
     /**
-     * Convert tag names to slugs
+     * Before create.
+     *
+     * @return void
      */
-    public function setSlugAttribute($value)
+    public function beforeCreate()
     {
-        $newSlug = str_slug($value);
-        $this->attributes['slug'] = $newSlug;
+        $this->setInitialSlug();
+    }
 
-        if (empty($newSlug))
-        {
-            $this->attributes['slug'] = str_slug($this->attributes['name']);
-        }
+    /**
+     * Set the initial slug.
+     *
+     * @return void
+     */
+    protected function setInitialSlug()
+    {
+        $this->slug = str_slug($this->name);
+    }
+
+    /**
+     * Convert tag names to lower case
+     */
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = mb_strtolower($value);
     }
 
      /**
