@@ -197,7 +197,8 @@ class BlogTagSearch extends ComponentBase
     {
         // Count the number of posts with this tag
         $this->totalPosts = Post::whereHas('tags', function($tag) {
-                $tag->where('name', $this->property('tag'));
+                $tag->where('name', $this->property('tag'))
+                    ->orWhere('slug', $this->property('tag');
             })
             ->count();
 
