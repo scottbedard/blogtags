@@ -32,6 +32,6 @@
   - Add slug field to tags (Fl0Cri)
   - add_slug_column.php
 1.4.0:
-  - !!! A slug is now created for each tag.
+  - "!!! A slug is now created for each tag."
 1.4.1:
   - Turkish translation added (kutups)
