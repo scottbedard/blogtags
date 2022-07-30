@@ -1,0 +1,8 @@
+{
+    "name": "bedard/blogtags-plugin",
+    "type": "october-plugin",
+    "description": "This plugin is an extension to the RainLab.Blog plugin. This extension enables tagging blog posts and displaying related articles.",
+    "require": {
+        "composer/installers": "~1.0"
+    }
+}
